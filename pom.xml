@@ -12,6 +12,7 @@
     <modules>
         <module>camera</module>
         <module>shop</module>
+        <module>hibernate-console</module>
     </modules>
 
 </project>
