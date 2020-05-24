@@ -11,7 +11,11 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@NamedQuery(name = "Product.getProductByTitle", query = "select p from Product p where p.title=:title")
+@NamedQueries({
+        @NamedQuery(name = "Product.getProductByTitle", query = "select p from Product p where p.title=:title"),
+        @NamedQuery(name = "Product.getProductByCustomerName", query = "select o.product from Customer c join OrderProduct o on c.id=o.product.id where c.name=:name"),
+        @NamedQuery(name = "Product.getOrderProductsByProductTitle", query = "select o from Product p join OrderProduct o on p.id=o.product.id where p.title=:title")
+})
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

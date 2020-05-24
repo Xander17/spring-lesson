@@ -69,8 +69,7 @@ public class Shop {
             String name = in.nextLine();
             Set<Product> products = repo.getProductsByCustomerName(name);
             printSeparator();
-            if (products == null) System.out.println("No customer '" + name + "'");
-            else if (products.size() == 0) System.out.println("No products!");
+            if (products.size() == 0) System.out.println("No products!");
             else {
                 System.out.println("Products of customer '" + name + "':");
                 products.stream()
@@ -84,8 +83,7 @@ public class Shop {
             String name = in.nextLine();
             List<OrderProduct> orders = repo.getOrderProductsByCustomerName(name);
             printSeparator();
-            if (orders == null) System.out.println("No customer '" + name + "'");
-            else if (orders.size() == 0) System.out.println("No orders!");
+            if (orders.size() == 0) System.out.println("No orders!");
             else {
                 System.out.println("Orders of customer '" + name + "':");
                 orders.forEach(orderProducts -> System.out.println(orderProducts.getProduct().getTitle() + "\t" +
@@ -98,8 +96,7 @@ public class Shop {
             String title = in.nextLine();
             Set<Customer> customers = repo.getCustomersByProductTitle(title);
             printSeparator();
-            if (customers == null) System.out.println("No product '" + title + "'");
-            else if (customers.size() == 0) System.out.println("No customers!");
+            if (customers.size() == 0) System.out.println("No customers!");
             else {
                 System.out.println("Customers of product '" + title + "':");
                 customers.stream()
@@ -113,8 +110,7 @@ public class Shop {
             String title = in.nextLine();
             List<OrderProduct> orders = repo.getOrderProductsByProductTitle(title);
             printSeparator();
-            if (orders == null) System.out.println("No product '" + title + "'");
-            else if (orders.size() == 0) System.out.println("No orders!");
+            if (orders.size() == 0) System.out.println("No orders!");
             else {
                 System.out.println("Orders of product '" + title + "':");
                 orders.forEach(orderProducts -> System.out.println(orderProducts.getCustomer().getName() + "\t" +
