@@ -1,25 +1,21 @@
 package ru.geekbrains.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.geekbrains.entities.Product;
 import ru.geekbrains.entities.User;
-import ru.geekbrains.repositories.UserRepository;
+import ru.geekbrains.services.UserService;
 
 @Controller
 @RequestMapping("users")
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
-    private UserRepository userRepository;
-
-    @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserService userRepository;
 
     @GetMapping
     public String userList(Model model) {

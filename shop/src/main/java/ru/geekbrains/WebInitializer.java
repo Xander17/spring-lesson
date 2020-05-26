@@ -28,6 +28,6 @@ public class WebInitializer extends AbstractAnnotationConfigDispatcherServletIni
         characterEncodingFilter.setEncoding("UTF-8");
         characterEncodingFilter.setForceEncoding(true);
         HiddenHttpMethodFilter httpMethodFilter = new HiddenHttpMethodFilter();
-        return new Filter[]{characterEncodingFilter,httpMethodFilter};
+        return new Filter[]{characterEncodingFilter, httpMethodFilter};
     }
 }

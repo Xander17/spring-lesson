@@ -1,16 +1,26 @@
 package ru.geekbrains.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+import java.math.BigDecimal;
+
+@Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Data
 public class Product {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @Column
     private String title;
+
+    @Column
     private String description;
-    private double price;
+
+    @Column
+    private BigDecimal price;
 }
