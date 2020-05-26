@@ -1,43 +1,21 @@
 package ru.geekbrains.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.geekbrains.entities.Product;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.math.BigDecimal;
 
 @Repository
-public class ProductRepository {
+public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    private AtomicInteger lastId;
+    Page<Product> findAllByPriceGreaterThanEqual(BigDecimal min, Pageable pageable);
 
-    private Map<Long, Product> products;
+    Page<Product> findAllByPriceLessThanEqual(BigDecimal max, Pageable pageable);
 
-    public ProductRepository() {
-        lastId = new AtomicInteger(0);
-        products = new ConcurrentHashMap<>();
+    Page<Product> findAllByPriceBetween(BigDecimal min, BigDecimal max, Pageable pageable);
 
-        add(new Product(-1, "Product1", "Description1", 10));
-        add(new Product(-1, "Product2", "Description2", 20));
-        add(new Product(-1, "Product3", "Description3", 30));
-        add(new Product(-1, "Product4", "Description4", 40));
-        add(new Product(-1, "Product5", "Description5", 50));
-    }
-
-    public List<Product> findAll() {
-        return new ArrayList<>(products.values());
-    }
-
-    public Product findById(long id) {
-        return products.get(id);
-    }
-
-    public void add(Product product) {
-        long id = lastId.incrementAndGet();
-        product.setId(id);
-        products.put(id, product);
-    }
+    Page<Product> findAllByPrice(BigDecimal price, Pageable pageable);
 }
