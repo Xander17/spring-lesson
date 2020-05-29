@@ -1,117 +1,110 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"/>
-    <title>Product list</title>
+<head th:replace="fragments/main::header(~{::title})">
+    <title>Products list</title>
 </head>
 
 <body>
-
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">EShop</a>
-
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/products}">Products</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/users}">Users</a>
-                </li>
-            </ul>
-
-            <form class="form-inline my-2 my-lg-0" action="#" method="post">
-                <button class="btn btn-outline-success my-2 my-sm-0">Logout</button>
-            </form>
-        </div>
-    </nav>
+    <th:block th:replace="fragments/navbar::top"/>
 
     <div class="container">
         <div class="row py-2">
             <div class="col-12">
                 <a class="btn btn-primary" th:href="@{/products/add}">Add Product</a>
             </div>
-            <div th:if="${products.numberOfElements>0}" class="col-12">
-                <nav class="col-12 my-3 px-0">
-                    <ul class="pagination pagination-sm">
-                        <li th:each="i:${#numbers.sequence(1,products.totalPages)}" class="page-item"
-                            th:classappend="${i eq (products.number+1)?'active':''}">
-                            <a class="page-link"
-                               th:href="@{/products(page=${i}-1,min=${param.min},max=${param.max})}"
-                               th:text="${i}"></a></li>
-                    </ul>
-                </nav>
+            <div th:if="${products.hasContent()}" class="col-12 align-items-center">
+                <div class="row col-12 my-3 mx-0 px-0 align-items-center">
+                    <nav th:with="currentpage=@{${filterUrl}(pageSize=${products.size})}"
+                         class="col-9 px-0 align-items-center">
+                        <ul class="pagination pagination-sm my-0">
+                            <li class="page-item" th:classappend="${products.isFirst()?'disabled':''}">
+                                <a class="page-link"
+                                   th:href="@{${currentpage}(page=${products.number}-1)}">&lt;&lt;</a>
+                            </li>
+                            <li th:each="i:${pageNumbers}" class="page-item"
+                                th:classappend="|${i==(products.number+1)?'active':''} ${i==-1?'disabled':''}|">
+                                <a class="page-link"
+                                   th:href="@{${currentpage}(page=${i}-1)}"
+                                   th:text="${i!=-1?i:'..'}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${products.isLast()?'disabled':''}">
+                                <a class="page-link"
+                                   th:href="@{${currentpage}(page=${products.number}+1)}">&gt;&gt;</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <!--page sizes settings-->
+                    <div class="dropdown my-0 px-0 col-3 text-right align-items-center"
+                         th:with="sizes=${ {5,10,25,50} }">
+                        <span>Elements on page:</span>
+                        <a class="btn btn-primary dropdown-toggle" href="#" role="button"
+                           id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                           th:text="${products.size}">
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a th:if="${products.size}!=${size}" th:each="size:${sizes}" class="dropdown-item"
+                               th:href="@{${filterUrl}(page=${products.number},pageSize=${size})}"
+                               th:text="${size}"></a>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12 px-0">
                     <table class="table table-striped table-hover my-2">
                         <thead>
                         <tr class="d-flex">
-                            <th scope="col" class="col-1">Id</th>
+                            <th scope="col" class="col-1 text-center">#</th>
                             <th scope="col" class="col-4">Name</th>
                             <th scope="col" class="col-4">Description</th>
-                            <th scope="col" class="col-1">Price</th>
-                            <th scope="col" class="col-2">Actions</th>
+                            <th scope="col" class="col-1 text-center">Price</th>
+                            <th scope="col" class="col-2 text-right">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="product,iter:${products}" class="d-flex">
-                            <th scope="row" th:text="${iter.count + products.size * products.number}" class="col-1"></th>
+                            <th scope="row" th:text="${iter.count + products.size * products.number}"
+                                class="col-1 text-center"></th>
                             <td th:text="${product.title}" class="col-4"></td>
                             <td th:text="${product.description}" class="col-4"></td>
-                            <td th:text="${#numbers.formatDecimal(product.price,1,2)}" class="col-1"></td>
-                            <td class="col-2">
-                                <a class="btn btn-success" href="#"><i class="fas fa-edit"></i></a>
-                                <a class="btn btn-danger" href="#"><i class="far fa-trash-alt"></i></a>
+                            <td th:text="${#numbers.formatDecimal(product.price,1,2)}" class="col-1 text-center"></td>
+                            <td class="col-2 text-right">
+                                <a class="btn btn-success" th:href="@{/products/edit/{id}(id=${product.id})}"><i
+                                        class="fas fa-edit"></i></a>
+                                <a class="btn btn-danger" th:href="@{/products/delete/{id}(id=${product.id})}"><i
+                                        class="far fa-trash-alt"></i></a>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div th:if="${products.numberOfElements==0}" class="alert alert-primary col-12 m-3">
+            <div th:unless="${products.hasContent()}" class="alert alert-primary col-12 m-3">
                 No elements
             </div>
             <br>
         </div>
-        <form class="col-3 pl-0">
+        <form class="col-3 pl-0" th:object="${productFilter}">
             <div class="form-group">
-                <label for="min">Minimum price</label>
-                <input type="number" class="form-control" id="min" name="min" min="0.01" step="0.01"
-                th:value="${param.min}==null?'':${param.min[0]}">
+                <label for="titlePart">Title</label>
+                <input type="text" class="form-control" id="titlePart" name="titlePart" min="0.01" step="0.01"
+                       th:field="*{titlePart}">
             </div>
             <div class="form-group">
-                <label for="max">Maximum price</label>
-                <input type="number" class="form-control" id="max" name="max" min="0.01" step="0.01"
-                       th:value="${param.max}==null?'':${param.max[0]}">
+                <label for="minPrice">Minimum price</label>
+                <input type="number" class="form-control" id="minPrice" name="minPrice" min="0.01" step="0.01"
+                       th:field="*{minPrice}">
             </div>
+            <div class="form-group">
+                <label for="maxPrice">Maximum price</label>
+                <input type="number" class="form-control" id="maxPrice" name="maxPrice" min="0.01" step="0.01"
+                       th:field="*{maxPrice}">
+            </div>
+            <input type="hidden" name="pageSize" th:value="${products.size}">
             <button type="submit" class="btn btn-primary my-2">Set filters</button>
-            <a class="btn btn-primary my-2" th:href="@{/products}">Reset filters</a>
+            <a class="btn btn-primary my-2" th:href="@{/products(pageSize=${products.size})}">Reset filters</a>
         </form>
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-            crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-            crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-            crossorigin="anonymous"></script>
+    <th:block th:replace="fragments/main::scripts"/>
 </body>
-
 </html>
