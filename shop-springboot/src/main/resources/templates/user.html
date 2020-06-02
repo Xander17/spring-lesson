@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/main::header(~{::title})">
+    <title th:text="${user.name}==null?'Add user':('Edit user \''+user.name+'\'')"></title>
+</head>
+
+<body>
+    <th:block th:replace="fragments/navbar::top"/>
+
+    <div class="container">
+        <div class="row py-2">
+            <div class="col-12">
+                <form th:action="@{/users}" method="post" th:object="${user}">
+                    <input type="hidden" id="id" th:field="*{id}">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" th:field="*{name}" class="form-control" placeholder="Enter name">
+                        <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}"
+                               class="form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Name</label>
+                        <input type="email" id="email" th:field="*{email}" class="form-control"
+                               placeholder="Enter email">
+                        <small th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                               class="form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" th:field="*{password}" class="form-control"
+                               placeholder="Enter password">
+                        <small th:if="${#fields.hasErrors('password')}" th:errors="*{password}"
+                               class="form-text text-danger"></small>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm password</label>
+                        <input type="password" id="confirmPassword" th:field="*{confirmPassword}" class="form-control"
+                               placeholder="Confirm password">
+                        <small th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"
+                               class="form-text text-danger"></small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" th:text="${user.id!=null?'Save':'Add'}"></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="fragments/main::scripts"/>
+</body>
+</html>
