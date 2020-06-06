@@ -1,0 +1,47 @@
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "title": "Product1",
+  "description": "Description1",
+  "price": 10.99
+}
+
+###
+
+GET http://localhost:8080/api/products
+
+###
+
+GET http://localhost:8080/api/products/3
+
+###
+
+POST http://localhost:8080/api/products/page
+Content-Type: application/json
+
+{
+  "filter": {
+    "minPrice": 20
+  },
+  "page": 0,
+  "pageSize": 10
+}
+
+###
+
+PUT http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "id": 3,
+  "title": "Title33",
+  "description": "Desc33",
+  "price": 33.00
+}
+
+###
+
+DELETE http://localhost:8080/api/products/3
+
+###

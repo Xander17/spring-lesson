@@ -11,6 +11,7 @@ import ru.geekbrains.shopspringboot.repositories.ProductRepository;
 import ru.geekbrains.shopspringboot.services.filters.ProductFilter;
 import ru.geekbrains.shopspringboot.services.filters.ProductSpecification;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,9 +25,15 @@ public class ProductService {
         return repository.findAll(ProductSpecification.get(filter), pageable);
     }
 
+    @Transactional(readOnly = true)
+    public List<Product> findAll() {
+        return repository.findAll();
+    }
+
     @Transactional
-    public void save(Product product) {
-        repository.save(product);
+    public long save(Product product) {
+        Product productNew = repository.save(product);
+        return productNew.getId();
     }
 
     public Optional<Product> findById(long id) {
