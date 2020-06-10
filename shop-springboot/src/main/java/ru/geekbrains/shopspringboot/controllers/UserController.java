@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.geekbrains.shopspringboot.controllers.utils.PageNumbers;
 import ru.geekbrains.shopspringboot.entities.User;
+import ru.geekbrains.shopspringboot.services.RoleService;
 import ru.geekbrains.shopspringboot.services.UserService;
 
 import javax.validation.Valid;
@@ -23,6 +24,7 @@ public class UserController {
     private final int MAX_NEIGHBOR_PAGE_NUMBERS = 4;
 
     private final UserService userService;
+    private final RoleService roleService;
 
     @GetMapping
     public String userList(Model model,
@@ -38,11 +40,13 @@ public class UserController {
     @GetMapping("add")
     public String addUser(Model model) {
         model.addAttribute("user", new User());
+        model.addAttribute("allRoles", roleService.findAll());
         return "user";
     }
 
     @PostMapping
-    public String saveUser(@Valid User user, BindingResult bindingResult) {
+    public String saveUser(Model model, @Valid User user, BindingResult bindingResult) {
+        model.addAttribute("allRoles", roleService.findAll());
         if (bindingResult.hasErrors()) return "user";
         if (!user.getPassword().equals(user.getConfirmPassword())) {
             bindingResult.rejectValue("confirmPassword", "", "Passwords are not equals");
@@ -57,6 +61,7 @@ public class UserController {
         User user = userService.findById(id).orElse(null);
         if (user == null) return "redirect:/users";
         model.addAttribute("user", user);
+        model.addAttribute("allRoles", roleService.findAll());
         return "user";
     }
 

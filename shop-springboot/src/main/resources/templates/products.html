@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="fragments/main::header(~{::title})">
     <title>Products list</title>
@@ -10,7 +11,7 @@
 
     <div class="container">
         <div class="row py-2">
-            <div class="col-12">
+            <div class="col-12" sec:authorize="hasRole('MANAGER')">
                 <a class="btn btn-primary" th:href="@{/products/add}">Add Product</a>
             </div>
             <div th:if="${products.hasContent()}" class="col-12 align-items-center">
@@ -55,9 +56,12 @@
                         <tr class="d-flex">
                             <th scope="col" class="col-1 text-center">#</th>
                             <th scope="col" class="col-4">Name</th>
-                            <th scope="col" class="col-4">Description</th>
+                            <th scope="col"
+                                th:classappend="${#authorization.expr('hasRole(''MANAGER'')')}?'col-4':'col-6'">
+                                Description
+                            </th>
                             <th scope="col" class="col-1 text-center">Price</th>
-                            <th scope="col" class="col-2 text-right">Actions</th>
+                            <th scope="col" class="col-2 text-right" sec:authorize="hasRole('MANAGER')">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -65,13 +69,14 @@
                             <th scope="row" th:text="${iter.count + products.size * products.number}"
                                 class="col-1 text-center"></th>
                             <td th:text="${product.title}" class="col-4"></td>
-                            <td th:text="${product.description}" class="col-4"></td>
+                            <td th:text="${product.description}"
+                                th:classappend="${#authorization.expr('hasRole(''MANAGER'')')}?'col-4':'col-6'"></td>
                             <td th:text="${#numbers.formatDecimal(product.price,1,2)}" class="col-1 text-center"></td>
-                            <td class="col-2 text-right d-inline-block">
+                            <td class="col-2 text-right d-inline-block" sec:authorize="hasRole('MANAGER')">
                                 <a class="btn btn-success" th:href="@{/products/edit/{id}(id=${product.id})}"><i
                                         class="fas fa-edit"></i></a>
                                 <form th:action="@{/products/delete/{id}(id=${product.id})}" th:method="delete"
-                                class="d-inline-block">
+                                      class="d-inline-block">
                                     <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                                 </form>
                             </td>
