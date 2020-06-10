@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="fragments/main::header(~{::title})">
     <title>Users list</title>
@@ -10,7 +11,7 @@
 
     <div class="container">
         <div class="row py-2">
-            <div class="col-12">
+            <div class="col-12" sec:authorize="hasRole('SUPER_ADMIN')">
                 <a class="btn btn-primary" th:href="@{/users/add}">Add User</a>
             </div>
             <div th:if="${users.hasContent()}" class="col-12 align-items-center">
@@ -54,22 +55,36 @@
                         <thead>
                         <tr class="d-flex">
                             <th scope="col" class="col-1 text-center">#</th>
-                            <th scope="col" class="col-5">Name</th>
-                            <th scope="col" class="col-4">Email</th>
-                            <th scope="col" class="col-2 text-right">Actions</th>
+                            <th scope="col" class="col-2">Name</th>
+                            <th scope="col" class="col-3">Email</th>
+                            <th scope="col" class="text-center"
+                                th:classappend="${#authorization.expr('hasRole(''SUPER_ADMIN'')')}?'col-3':'col-5'">
+                                Roles
+                            </th>
+                            <th scope="col" class="col-1 text-center">Enabled</th>
+                            <th scope="col" class="col-2 text-right" sec:authorize="hasRole('SUPER_ADMIN')">Actions</th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr th:each="user,iter:${users}" class="d-flex">
                             <th scope="row" th:text="${iter.count + users.size * users.number}"
                                 class="col-1 text-center"></th>
-                            <td th:text="${user.name}" class="col-5"></td>
-                            <td th:text="${user.email}" class="col-4"></td>
-                            <td class="col-2 text-right">
-                                <a class="btn btn-success" th:href="@{/users/edit/{id}(id=${user.id})}"><i
-                                        class="fas fa-edit"></i></a>
+                            <td class="col-2" th:text="${user.name}"></td>
+                            <td class="col-3" th:text="${user.email}"></td>
+                            <td class="text-center"
+                                th:classappend="${#authorization.expr('hasRole(''SUPER_ADMIN'')')}?'col-3':'col-5'">
+                                <span class="badge badge-primary" th:each="role:${user.roles}"
+                                      th:text="${role.name} "></span>
+                            </td>
+                            <td class="col-1 text-center">
+                                <span class="badge badge-success" th:if="${user.enabled}">YES</span>
+                                <span class="badge badge-danger" th:unless="${user.enabled}">NO</span>
+                            </td>
+                            <td class="col-2 text-right" sec:authorize="hasRole('SUPER_ADMIN')">
+                                <a class="btn btn-success" th:href="@{/users/edit/{id}(id=${user.id})}">
+                                    <i class="fas fa-edit"></i></a>
                                 <form th:action="@{products/delete/{id}(id=${user.id})}" th:method="delete"
-                                class="d-inline-block">
+                                      class="d-inline-block">
                                     <button class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                                 </form>
                             </td>
